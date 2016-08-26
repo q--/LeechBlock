@@ -1,3 +1,6 @@
+### Version 1.0.6 (26 Aug 2016)
+* Fixed loophole where blocking a page could be cancelled using <kbd>Escape</kbd> (issue 10)
+
 ### Version 1.0.5 (07 Aug 2016)
 * Minor code improvements (per AMO reviewer recommendation).
 

@@ -425,6 +425,24 @@ LeechBlock.checkWindow = function (parsedURL, win, isRepeat) {
 					win.location.replace(blockURL);
 				}
 
+				// Prevent bypassing the block by pressing Escape to cancel the redirect to blockURL (issue #10)
+
+				// Remove old listener first
+				LeechBlock.preventEscapeListener && gBrowser.removeEventListener("keydown", LeechBlock.preventEscapeListener);
+
+				gBrowser.addEventListener("keydown",
+					LeechBlock.preventEscapeListener = // Assign for use with removeEventListener
+						evt => { // Using an arrow function so the variable doc is available to it (thanks to autobinding)
+							if (evt.key === 'Escape' &&
+								gBrowser.getBrowserForTab(gBrowser.selectedTab).contentDocument === doc) { // Is this still the tab we're trying to redirect to the block page?
+								evt.preventDefault(); // Yes? Then block the default action of Escape, which is to cancel navigation
+							} else {
+								gBrowser.removeEventListener("keydown", LeechBlock.preventEscapeListener); //No? Then remove the eventListener
+								LeechBlock.preventEscapeListener = undefined;
+							}
+						}
+				);
+
 				return; // nothing more to do
 			}
 
